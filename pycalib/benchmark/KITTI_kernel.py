@@ -103,7 +103,7 @@ if __name__ == "__main__":
     
     train_size = 5000
     test_size = 4000
-    #reg_candidates = np.logspace(-4, 0, num=10)  # 例: 1e-4 ～ 1e2 の候補
+    #reg_candidates = np.logspace(-4, 0, num=10)  # e.g., candidates from 1e-4 to 1e0
     reg_candidates = np.array([0.1, 1.])
     scores = pd.DataFrame()
     for reg in tqdm(reg_candidates):

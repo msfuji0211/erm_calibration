@@ -65,19 +65,19 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 
 def select_sigma_from_data(X, subsample_size=1000):
         """
-        データ X（2次元空間の点が並ぶ配列）から、ペアワイズユークリッド距離の中央値を sigma として選択します。
+        Select sigma as the median of pairwise Euclidean distances from data X.
 
         Parameters
         ----------
         X : array-like of shape (n_samples, d)
-            各行が d 次元のデータ点を表す配列（通常は d=2）。
+            Each row represents a d-dimensional data point (typically d=2).
         subsample_size : int, default=1000
-            サブサンプルとして用いるサンプル数。サンプル数がこれを超える場合はランダムに選択します。
+            Number of samples for subsampling. If exceeded, choose a random subset.
             
         Returns
         -------
         sigma : float
-            選択されたカーネル幅（中央値）。
+            Selected kernel width (median).
         """
         n = X.shape[0]
         if n > subsample_size:
@@ -86,7 +86,7 @@ def select_sigma_from_data(X, subsample_size=1000):
         else:
             X_sample = X
 
-        # 2次元空間でのペアワイズユークリッド距離を計算（pdist を利用）
+        # Compute pairwise Euclidean distances using pdist
         distances = pdist(X_sample, metric='euclidean')
         median_val = np.median(distances)
         return median_val
@@ -1255,43 +1255,42 @@ class GPCalibration(CalibrationMethod):
 ###############################################################################
 class KernelRidgeCalibration(CalibrationMethod):
     """
-    Kernel Ridge Regression を用いたキャリブレーション（squared lossを使用）
+    Calibration using Kernel Ridge Regression (squared loss)
     
     Parameters
     ----------
     kernel : str or callable, default='rbf'
-        使用するカーネル関数。"rbf"（Gaussian kernel）または "laplace"（Laplaceカーネル）を文字列で指定可能。
-        callable を渡すこともできます。
+        Kernel to use. Either a string ("rbf" for Gaussian kernel or "laplace" for Laplace kernel) or a callable.
     alpha : float, default=1.0
-        正則化パラメータ．
+        Regularization parameter.
     gamma : float or None, default=None
-        カーネル関数に用いる gamma パラメータ．
+        Gamma parameter used by the kernel function.
     **kwargs : dict
-        KernelRidge に渡すその他のキーワード引数。
+        Additional keyword arguments passed to KernelRidge.
     """
     def __init__(self, kernel='rbf', alpha=0.01, gamma=1.0, **kwargs):
         self.alpha = alpha
         self.gamma = gamma
         self.kwargs = kwargs
         
-        # kernelが文字列で指定されている場合、laplaceの場合はカスタムカーネル関数を定義する
+        # If kernel is specified as a string and is 'laplace', define a custom kernel function
         if isinstance(kernel, str) and kernel.lower() == 'laplace':
-            # Laplaceカーネル： k(x,z)= exp(-gamma * |x-z|)
+            # Laplace kernel: k(x,z) = exp(-gamma * |x - z|)
             if gamma is None:
                 raise ValueError("For Laplace kernel, gamma must be specified.")
             def laplace_kernel(X, Y):
-                # ここでは各入力が1次元と仮定（shape: (n_samples, 1)）
+                # Assume each input is 1D here (shape: (n_samples, 1))
                 diff = np.abs(X - Y.T)
                 return np.exp(-gamma * diff)
             self.kernel = laplace_kernel
         else:
-            # それ以外はそのまま（たとえば、'rbf'の場合はKernelRidgeが内部で対応）
+            # Otherwise, leave as-is (e.g., 'rbf' handled internally by KernelRidge)
             self.kernel = kernel
 
     def fit(self, X, y):
         """
-        バイナリキャリブレーションデータ X (n_samples, 2) とラベル y に対してモデルを学習します．
-        X[:,1]（クラス1の未校正確率）を1次元の入力特徴量として使用します．
+        Fit the model on binary calibration data X (n_samples, 2) and labels y.
+        Uses X[:,1] (uncalibrated probability for class 1) as a 1D input feature.
         """
         if X.ndim == 1 or np.shape(X)[1] != 2:
             raise ValueError("KernelRidgeCalibration: Calibration training data must have shape (n_samples, 2).")
@@ -1303,8 +1302,8 @@ class KernelRidgeCalibration(CalibrationMethod):
 
     def predict_proba(self, X):
         """
-        校正済み確率を計算します。学習時と同様に、X[:,1] を入力特徴量として使用し、
-        出力は [1-p, p] の形式で返します。
+        Compute calibrated probabilities. As in training, uses X[:,1] as input
+        and returns results in the form [1-p, p].
         """
         if X.ndim == 1 or np.shape(X)[1] != 2:
             raise ValueError("KernelRidgeCalibration: Calibration data must have shape (n_samples, 2).")
@@ -1321,34 +1320,35 @@ class KernelRidgeCalibration(CalibrationMethod):
 
 class KernelLogisticRegressionCalibration(CalibrationMethod):
     """
-    PyTorch を用いたカーネルロジスティック回帰によるキャリブレーション
+    Calibration via Kernel Logistic Regression implemented in PyTorch.
     
-    入力：未校正のバイナリ確率 X[:,1] を1次元の特徴量として扱い、学習するモデルは下記の形です：
+    Input: Treat the uncalibrated binary probability X[:,1] as a 1D feature.
+    The learned model has the form:
     
-        f(x) = ∑ᵢ αᵢ ⋅ k(x, xᵢ),
-        p(x) = σ(f(x)) = 1/(1+exp(-f(x)))
+        f(x) = ∑ᵢ αᵢ · k(x, xᵢ),
+        p(x) = σ(f(x)) = 1 / (1 + exp(-f(x)))
     
-    ここで k(x, xᵢ) は、選択したカーネル（Gaussian または Laplace）に基づいて計算されます。
-    最適化は PyTorch の勾配降下（Adam）を用いてパラメータ α と b を学習します。
+    Here, k(x, xᵢ) is computed using the chosen kernel (Gaussian or Laplace).
+    Optimization uses PyTorch-based gradient descent (Adam) to learn α and b.
     
     Parameters
     ----------
-    kernel_type : str, default='rbf'
-        使用するカーネルの種類。'rbf' または 'laplace' を指定。
+    kernel : str, default='rbf'
+        Kernel type: 'rbf' or 'laplace'.
     gamma : float, default=1.0
-        カーネル関数に用いるパラメータ。
-    lam : float, default=0.01
-        正則化パラメータ。
+        Parameter used by the kernel function.
+    alpha : float, default=0.01
+        Regularization parameter.
     lr : float, default=0.01
-        学習率。
+        Learning rate.
     max_iter : int, default=1000
-        最大反復回数。
+        Maximum number of iterations.
     tol : float, default=1e-6
-        収束判定用の損失変化の閾値。
+        Convergence threshold for change in loss.
     verbose : bool, default=False
-        学習過程の情報を出力するかどうか。
+        Whether to print training progress.
     random_state : int, default=42
-        乱数シード。
+        Random seed.
     """
     def __init__(self, kernel='rbf', gamma=1.0, alpha=0.01, lr=0.01, max_iter=1000, tol=1e-6, verbose=False, random_state=42):
         self.kernel = kernel
@@ -1363,7 +1363,7 @@ class KernelLogisticRegressionCalibration(CalibrationMethod):
     
     def _kernel_torch(self, X, Y):
         """
-        PyTorch 用のカーネル行列を計算します。
+        Compute the kernel matrix for PyTorch tensors.
         
         Parameters
         ----------
@@ -1374,7 +1374,7 @@ class KernelLogisticRegressionCalibration(CalibrationMethod):
         -------
         K : torch.Tensor, shape (n_samples_X, n_samples_Y)
         """
-        diff = X - Y.t()  # ブロードキャストにより差分計算： shape (n, m)
+        diff = X - Y.t()  # broadcasted difference: shape (n, m)
         self.gamma = select_sigma_from_data(X)
         #if self.kernel.lower() == 'rbf':
         if self.kernel == 'rbf':
@@ -1383,24 +1383,24 @@ class KernelLogisticRegressionCalibration(CalibrationMethod):
         elif self.kernel == 'laplace':
             K = torch.exp(-self.gamma * torch.abs(diff))
         else:
-            raise ValueError("Unknown kernel_type. Please choose 'rbf' or 'laplace'.")
+            raise ValueError("Unknown kernel type. Please choose 'rbf' or 'laplace'.")
         return K
 
     def fit(self, X, y):
         """
-        学習データ X (n_samples, 2) とラベル y を用いてモデルを学習します。
-        入力 X[:,1] を1次元の特徴量として使用します。
+        Train the model using training data X (n_samples, 2) and labels y.
+        Uses X[:,1] as a 1D feature.
         """
         if X.ndim == 1 or np.shape(X)[1] != 2:
             raise ValueError("KernelLogisticRegressionCalibrationPT: Calibration training data must have shape (n_samples, 2).")
         X_feature = X[:, 1].reshape(-1, 1)
         n_samples = X_feature.shape[0]
         
-        # PyTorch のテンソルに変換（float32）
+        # Convert to PyTorch tensors (float32)
         self.X_train_torch = torch.tensor(X_feature, dtype=torch.float32)
         y_tensor = torch.tensor(y.reshape(-1, 1), dtype=torch.float32)
         
-        # 学習時のカーネル行列の計算
+        # Compute kernel matrix on training data
         K = self._kernel_torch(self.X_train_torch, self.X_train_torch)  # shape: (n_samples, n_samples)
         
         if isinstance(K, np.ndarray):
@@ -1422,7 +1422,7 @@ class KernelLogisticRegressionCalibration(CalibrationMethod):
         self.lr = 0.5 / L if L > 0 else self.lr
         print(f"Estimated lambda_max: {lambda_max:.4f}, L: {L:.4f}, using learning rate: {self.lr:.6f}")
         
-        # 学習すべきパラメータの初期化: α (n_samples×1) と b (スカラー)
+        # Initialize parameters to learn: α (n_samples×1) and b (scalar)
         self.alpha_pt = torch.zeros((n_samples, 1), dtype=torch.float32, requires_grad=True)
         #self.b_pt = torch.zeros(1, dtype=torch.float32, requires_grad=True)
         
@@ -1430,7 +1430,7 @@ class KernelLogisticRegressionCalibration(CalibrationMethod):
         optimizer = optim.SGD([self.alpha_pt], lr=self.lr)
         prev_loss = np.inf
         
-        # 勾配降下ループ
+        # Gradient descent loop
         for it in range(self.max_iter):
             optimizer.zero_grad()
             #f = torch.matmul(K, self.alpha_pt) + self.b_pt  # shape: (n_samples, 1)
@@ -1438,7 +1438,7 @@ class KernelLogisticRegressionCalibration(CalibrationMethod):
             p = torch.sigmoid(f)
             # Negative log likelihood (binary cross entropy)
             loss = - torch.sum(y_tensor * torch.log(p + 1e-8) + (1 - y_tensor) * torch.log(1 - p + 1e-8))
-            # 正則化項: (1/2) * λ * α^T K α
+            # Regularization term: (1/2) * λ * α^T K α
             #reg_term = 0.5 * self.alpha * torch.matmul(self.alpha_pt.t(), torch.matmul(K, self.alpha_pt))
             reg_term = self.alpha * torch.matmul(self.alpha_pt.t(), torch.matmul(K_tensor, self.alpha_pt))
             loss = (loss + reg_term.squeeze()) / n_samples
@@ -1455,14 +1455,15 @@ class KernelLogisticRegressionCalibration(CalibrationMethod):
             loss.backward()
             optimizer.step()
         
-        # 学習済みパラメータの保存（detachして保持）
+        # Detach learned parameters for storage
         self.alpha_pt = self.alpha_pt.detach()
         #self.b_pt = self.b_pt.detach()
         return self
 
     def predict_proba(self, X):
         """
-        未校正データ X (n_samples, 2) に対して、校正済み確率を計算して [1-p, p] の形式で返します。
+        For uncalibrated data X (n_samples, 2), compute calibrated probabilities and
+        return them in the form [1-p, p].
         """
         if X.ndim == 1 or np.shape(X)[1] != 2:
             raise ValueError("KernelLogisticRegressionCalibrationPT: Calibration data must have shape (n_samples, 2).")
@@ -1470,7 +1471,7 @@ class KernelLogisticRegressionCalibration(CalibrationMethod):
         check_is_fitted(self, ["alpha_pt", "X_train_torch"])
         X_feature = X[:, 1].reshape(-1, 1)
         X_feature_torch = torch.tensor(X_feature, dtype=torch.float32)
-        # 学習時の X_train との間で新たなカーネル行列を計算
+        # Compute new kernel matrix between X and training inputs
         K_new = self._kernel_torch(X_feature_torch, self.X_train_torch)  # shape: (n_samples_new, n_train)
         #f_new = torch.matmul(K_new, self.alpha_pt) + self.b_pt
         f_new = torch.matmul(K_new, self.alpha_pt)

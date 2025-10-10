@@ -405,21 +405,21 @@ def compute_LinECE(y, p_pred):
 
 def select_sigma_from_vector(v, subsample_size=1000, min_sigma=1e-3):
     """
-    ベクトル v の全要素間の絶対差の中央値を sigma として選択します。
+    Select sigma as the median of absolute pairwise differences among elements of vector v.
     
     Parameters
     ----------
     v : array-like of shape (n_samples,)
-        数値が並ぶ 1 次元ベクトル。
+        One-dimensional numeric vector.
     subsample_size : int, default=1000
-        サブサンプルとして用いるサンプル数。サンプル数がこれを超える場合はランダムに選択します。
+        Number of samples for subsampling. If exceeded, a random subset is used.
     min_sigma : float, default=1e-3
-        sigma の下限値。中央値より小さい場合は、この値を返します。
+        Lower bound on sigma. If the median is smaller, this value is returned.
         
     Returns
     -------
     sigma : float
-        選択されたカーネル幅。
+        Selected kernel width.
     """
     v = np.asarray(v, dtype=float).flatten()
     n = v.shape[0]
@@ -429,7 +429,7 @@ def select_sigma_from_vector(v, subsample_size=1000, min_sigma=1e-3):
     else:
         v_sample = v
 
-    # ベクトルの全要素間の絶対差を計算（ブロードキャストを利用）
+    # Compute absolute pairwise differences using broadcasting
     diff = np.abs(v_sample[:, np.newaxis] - v_sample[np.newaxis, :])
     median_val = np.median(diff)
     return max(median_val, min_sigma)

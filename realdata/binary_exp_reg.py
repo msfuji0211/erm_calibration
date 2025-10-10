@@ -30,7 +30,7 @@ class KernelLogisticRegressionExact(BaseEstimator, ClassifierMixin):
     gamma: kernel width
     lambda_reg: regularization parameter λ
     lr: learning rate
-    max_iter, tol, verbose: GD の設定
+    max_iter, tol, verbose: settings for gradient descent
     """
     def __init__(self, kernel='rbf', gamma=None,
                  lambda_reg=1.0, lr=1e-3,

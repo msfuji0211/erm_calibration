@@ -65,7 +65,7 @@ def run_experiment(n_train=10000, n_test=10000, reg=1e-2):
         sce_krr_train = compute_LinECE(y_train, prob_krr_train)
         ece_krr_train = expected_calibration_error(y_train, prob_krr_train, num_bins_train)
         
-        print("\n【Kernel Ridge Regression (squared loss)】")
+        print("\n[Kernel Ridge Regression (squared loss)]")
         print("---- Test Data ----")
         print(f"Classification error: {err_krr_test:.4f}")
         print(f"KCE (Gaussian, sigma={kce_sigma_krr_test:.4f}): {kce_krr_gaussian_test.item():.4f}")
@@ -130,7 +130,7 @@ def run_experiment(n_train=10000, n_test=10000, reg=1e-2):
         sce_krr_train = compute_LinECE(y_train, prob_krr_train)
         ece_krr_train = expected_calibration_error(y_train, prob_krr_train, num_bins_train)
         
-        print("\n【Kernel Ridge Regression (squared loss)】")
+        print("\n[Kernel Ridge Regression (squared loss)]")
         print("---- Test Data ----")
         print(f"Classification error: {err_krr_test:.4f}")
         print(f"KCE (Gaussian, sigma={kce_sigma_krr_test:.4f}): {kce_krr_gaussian_test.item():.4f}")
@@ -161,8 +161,8 @@ def run_experiment(n_train=10000, n_test=10000, reg=1e-2):
             'ece_train': ece_krr_train.item(),
         })
         
-        # --- Kernel Logistic Regression (GD 法) ---
-        print("\n【Kernel Ridge Logistic Regression (GD 法)】")
+        # --- Kernel Logistic Regression (GD method) ---
+        print("\n[Kernel Ridge Logistic Regression (GD method)]")
         alpha_klr = kernel_logistic_regression(X_train, y_train, kernel_func, model_sigma, reg,
                                                max_iter=1000, lr=0.01, tol=1e-6)
         
