@@ -1,5 +1,5 @@
 Overview
-- This repository provides reproduction code for the paper “L2 -Regularized Empirical Risk Minimization Guarantees Small Smooth Calibration Error” (arXiv: pending). We study calibration behavior of kernel-based ERM (kernel ridge regression, kernel logistic regression) on synthetic and real datasets, reporting smooth calibration errors (LinECE), kernel calibration error (KCE), binned ECE, and accuracy.
+- This repository provides reproduction code for the paper “L2-Regularized Empirical Risk Minimization Guarantees Small Smooth Calibration Error” (https://arxiv.org/abs/2510.13450). We study calibration behavior of kernel-based ERM (kernel ridge regression, kernel logistic regression) on synthetic and real datasets, reporting smooth calibration errors (LinECE), kernel calibration error (KCE), binned ECE, and accuracy.
 
 Key contents
 - Evaluate KRR (squared loss) and KLR (logistic loss) with Gaussian and Laplace kernels
@@ -101,7 +101,7 @@ Performance notes
 
 Citation
 - If you use this repository, please cite:
-  - “L2 -Regularized Empirical Risk Minimization Guarantees Small Smooth Calibration Error”, arXiv (to appear). [Add the link once available]
+  - “L2-Regularized Empirical Risk Minimization Guarantees Small Smooth Calibration Error”, arXiv, 2025. [https://arxiv.org/abs/2510.13450]
 - If you use the bundled third-party code, please also cite:
   - Jonathan Wenger, Hedvig Kjellström, Rudolph Triebel. “Non-Parametric Calibration for Classification”, AISTATS 2020. See `pycalib/`
 
