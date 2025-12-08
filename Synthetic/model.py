@@ -91,11 +91,11 @@ def kernel_logistic_regression_gd(X_train, y_train, kernel_func, sigma, reg,
         
         loss_val = loss.item()
         improvement = abs(prev_loss - loss_val)
-        if i % 10 == 0:
+        if i % 100 == 0:
             print(f"GD Iteration {i}, loss: {loss_val:.6f}, improvement: {improvement:.6e}")
-        if improvement < tol:
-            print(f"Early stopping at iteration {i} with improvement {improvement:.6e}")
-            break
+        # if improvement < tol:
+        #     print(f"Early stopping at iteration {i} with improvement {improvement:.6e}")
+        #     break
         prev_loss = loss_val
         
     return alpha.detach()
@@ -118,10 +118,10 @@ def kernel_logistic_regression_lbfgs(X_train, y_train, kernel_func, sigma, reg, 
         loss = optimizer.step(closure)
         loss_val = loss.item()
         improvement = abs(prev_loss - loss_val)
-        if i % 10 == 0:
+        if i % 1000 == 0:
             print(f"Iteration {i}, loss: {loss_val:.6f}, improvement: {improvement:.6e}")
-        if improvement < tol:
-            print(f"Early stopping at iteration {i} with improvement {improvement:.6e}")
-            break
+        # if improvement < tol:
+        #     print(f"Early stopping at iteration {i} with improvement {improvement:.6e}")
+        #     break
         prev_loss = loss_val
     return alpha.detach()

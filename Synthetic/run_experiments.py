@@ -165,7 +165,7 @@ def run_experiment(n_train=10000, n_test=10000, reg=1e-2):
         print("\n[Kernel Logistic Regression (GD method)]")
         # Increase max_iter significantly to ensure convergence for small reg values
         alpha_klr = kernel_logistic_regression(X_train, y_train, kernel_func, model_sigma, reg,
-                                               max_iter=5000, lr=0.01, tol=1e-6, method='gd')
+                                               max_iter=1000, lr=0.01, tol=1e-6, method='gd')
         
         # evaluation on test data
         K_test_train = kernel_func(X_test, X_train, model_sigma)
