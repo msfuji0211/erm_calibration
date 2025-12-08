@@ -124,3 +124,10 @@ pycalib/benchmark/datasets/**/*.zip
 pycalib/benchmark/datasets/**/*.tar
 pycalib/benchmark/datasets/**/*.tar.gz
 
+# ------------------------------
+# Additional Experiment Outputs & Notebooks
+# ------------------------------
+*.csv
+*.ipynb
+*.pdf
+*.png

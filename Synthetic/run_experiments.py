@@ -162,9 +162,10 @@ def run_experiment(n_train=10000, n_test=10000, reg=1e-2):
         })
         
         # --- Kernel Logistic Regression (GD method) ---
-        print("\n[Kernel Ridge Logistic Regression (GD method)]")
+        print("\n[Kernel Logistic Regression (GD method)]")
+        # Increase max_iter significantly to ensure convergence for small reg values
         alpha_klr = kernel_logistic_regression(X_train, y_train, kernel_func, model_sigma, reg,
-                                               max_iter=1000, lr=0.01, tol=1e-6)
+                                               max_iter=5000, lr=0.01, tol=1e-6, method='gd')
         
         # evaluation on test data
         K_test_train = kernel_func(X_test, X_train, model_sigma)
@@ -292,7 +293,8 @@ def main():
         grouped.to_csv(os.path.join(results_dir, "experiment_results_grouped_n.csv"), index=False)
     
     elif args.exp_name in ['reg_sensitivity']:
-        reg_candidates = np.logspace(-4, 2, num=args.num_candidates_reg)  # example: 1e-4 ～ 1e2
+        #reg_candidates = np.logspace(-4, 2, num=args.num_candidates_reg)  # example: 1e-4 ～ 1e2
+        reg_candidates = np.logspace(-6, 2, num=args.num_candidates_reg)  # example: 1e-4 ～ 1e2
         n_train_fixed = args.sample_size_high
         n_test_fixed = args.sample_size_test
         for reg in reg_candidates:
