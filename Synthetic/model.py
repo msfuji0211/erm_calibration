@@ -86,7 +86,7 @@ def kernel_logistic_regression_gd(X_train, y_train, kernel_func, sigma, reg,
         loss = F.binary_cross_entropy_with_logits(f, y_train.float(), reduction='mean') \
                + reg * (alpha @ (K_tensor @ alpha)) / n
         loss.backward()
-        torch.nn.utils.clip_grad_norm_([alpha], clip_value)
+        # torch.nn.utils.clip_grad_norm_([alpha], clip_value)
         optimizer.step()
         
         loss_val = loss.item()
