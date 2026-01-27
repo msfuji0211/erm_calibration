@@ -12,14 +12,14 @@ class PredictionModel(nn.Module):
     def __init__(self, beta0, beta1):
         """
         beta0: scalar bias
-        beta1: 2D weight vector (given as list, np.array, or torch.Tensor)
+        beta1: weight vector (given as list, np.array, or torch.Tensor)
         """
         super(PredictionModel, self).__init__()
         self.beta0 = nn.Parameter(torch.tensor(beta0, dtype=torch.float32))
-        self.beta1 = nn.Parameter(torch.tensor(beta1, dtype=torch.float32))  # shape: [2]
+        self.beta1 = nn.Parameter(torch.tensor(beta1, dtype=torch.float32).flatten())
     
     def forward(self, x):
-        # x: [n, 2]
+        # x: [n, d]
         linear = self.beta0 + x @ self.beta1  # inner product calculation
         z1 = torch.sigmoid(linear)
         z2 = 1 - z1

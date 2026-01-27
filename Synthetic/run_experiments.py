@@ -13,13 +13,13 @@ from metrics import classification_error, kernel_calibration_error, compute_LinE
 # ------------------------------
 # Experiment
 # ------------------------------
-def run_experiment(n_train=10000, n_test=10000, reg=1e-2):
-    X_all, y_all = generate_data(n_train + n_test)
+def run_experiment(n_train=10000, n_test=10000, reg=1e-2, input_dim=1):
+    X_all, y_all = generate_data(n_train + n_test, input_dim=input_dim)
     
-    # data split (2D case, so unsqueeze is not needed)
-    X_train = X_all[:n_train]   # shape: [n_train, 2]
+    # data split (d-dimensional case, so unsqueeze is not needed)
+    X_train = X_all[:n_train]   # shape: [n_train, d]
     y_train = y_all[:n_train]
-    X_test = X_all[n_train:]    # shape: [n_test, 2]
+    X_test = X_all[n_train:]    # shape: [n_test, d]
     y_test = y_all[n_train:]
     
     # model-specific sigma is selected from training data by median heuristic
@@ -223,13 +223,13 @@ def run_experiment(n_train=10000, n_test=10000, reg=1e-2):
     
     return results
 
-def run_experiment_log_scale(n_low=100, n_high=10000, n_test=10000, num=10):
+def run_experiment_log_scale(n_low=100, n_high=10000, n_test=10000, num=10, input_dim=1):
     train_sizes = np.logspace(np.log10(n_low), np.log10(n_high), num=num).astype(int)
     all_results = []
     
     for n_train in train_sizes:
         print(f"\n----- Training size: {n_train} -----")
-        results = run_experiment(n_train=n_train, n_test=n_test, reg=1e-2)
+        results = run_experiment(n_train=n_train, n_test=n_test, reg=1e-2, input_dim=input_dim)
         all_results.extend(results)
     
     return all_results
@@ -243,6 +243,7 @@ def main():
     parser.add_argument('--sample_size_test', type=int, default=10000)
     parser.add_argument('--num_candidates_sample', type=int, default=10)
     parser.add_argument('--num_candidates_reg', type=int, default=10)
+    parser.add_argument('--input_dim', type=int, default=1)
     
     
     parser.set_defaults(parse=True)
@@ -260,7 +261,8 @@ def main():
             np.random.seed(seed)
             # run run_experiment_log_scale() for each seed
             results = run_experiment_log_scale(n_low=args.sample_size_low, n_high=args.sample_size_high, 
-                                               n_test=args.sample_size_test, num=args.num_candidates_sample)
+                                               n_test=args.sample_size_test, num=args.num_candidates_sample,
+                                               input_dim=args.input_dim)
             # add seed information
             for r in results:
                 r['seed'] = seed
@@ -302,7 +304,8 @@ def main():
             for seed in seeds:
                 torch.manual_seed(seed)
                 np.random.seed(seed)
-                results = run_experiment(n_train=n_train_fixed, n_test=n_test_fixed, reg=reg)
+                results = run_experiment(n_train=n_train_fixed, n_test=n_test_fixed, reg=reg,
+                                         input_dim=args.input_dim)
                 # add seed and reg information
                 for r in results:
                     r['reg'] = reg

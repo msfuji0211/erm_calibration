@@ -35,7 +35,7 @@ def estimate_lambda_max_randomized(K, l=10, q=2):
     return lambda_max
 
 # ------------------------------
-# sigma selection function (2D case)
+# sigma selection function (d-dimensional case)
 # ------------------------------
 def select_sigma_from_data(X, subsample_size=1000):
     n = X.shape[0]
@@ -44,7 +44,7 @@ def select_sigma_from_data(X, subsample_size=1000):
         X_sample = X[idx]
     else:
         X_sample = X
-    # median of Euclidean distance in 2D space
+    # median of Euclidean distance in d-dimensional space
     diff = torch.cdist(X_sample, X_sample, p=2)
     median_val = diff.view(-1).median().item()
     return median_val
