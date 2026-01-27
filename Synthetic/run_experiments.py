@@ -70,15 +70,15 @@ def run_experiment(n_train=10000, n_test=10000, reg=1e-2, input_dim=1):
         print(f"Classification error: {err_krr_test:.4f}")
         print(f"KCE (Gaussian, sigma={kce_sigma_krr_test:.4f}): {kce_krr_gaussian_test.item():.4f}")
         print(f"KCE (Laplace,  sigma={kce_sigma_krr_test:.4f}): {kce_krr_laplace_test.item():.4f}")
-        print(f"Smooth CE (SCE): {sce_krr_test.item():.4f}")
-        print(f"Expected Calibration Error (binning): {ece_krr_test:.4f}")
+        print(f"Smooth CE (SCE): {float(sce_krr_test):.4f}")
+        print(f"Expected Calibration Error (binning): {float(ece_krr_test):.4f}")
         
         print("---- Train Data ----")
         print(f"Classification error: {err_krr_train:.4f}")
         print(f"KCE (Gaussian, sigma={kce_sigma_krr_train:.4f}): {kce_krr_gaussian_train.item():.4f}")
         print(f"KCE (Laplace,  sigma={kce_sigma_krr_train:.4f}): {kce_krr_laplace_train.item():.4f}")
-        print(f"Smooth CE (SCE): {sce_krr_train.item():.4f}")
-        print(f"Expected Calibration Error (binning): {ece_krr_train:.4f}")
+        print(f"Smooth CE (SCE): {float(sce_krr_train):.4f}")
+        print(f"Expected Calibration Error (binning): {float(ece_krr_train):.4f}")
 
         results.append({
             'model': 'KRR',
@@ -87,13 +87,13 @@ def run_experiment(n_train=10000, n_test=10000, reg=1e-2, input_dim=1):
             'error_test': err_krr_test,
             'kce_gaussian_test': kce_krr_gaussian_test.item(),
             'kce_laplace_test': kce_krr_laplace_test.item(),
-            'sce_test': sce_krr_test.item(),
-            'ece_test': ece_krr_test.item(),
+            'sce_test': float(sce_krr_test),
+            'ece_test': float(ece_krr_test),
             'error_train': err_krr_train,
             'kce_gaussian_train': kce_krr_gaussian_train.item(),
             'kce_laplace_train': kce_krr_laplace_train.item(),
-            'sce_train': sce_krr_train.item(),
-            'ece_train': ece_krr_train.item(),
+            'sce_train': float(sce_krr_train),
+            'ece_train': float(ece_krr_train),
         })
         
         # --- Kernel Ridge Regression (squared loss) with theoretical reg ---
@@ -135,15 +135,15 @@ def run_experiment(n_train=10000, n_test=10000, reg=1e-2, input_dim=1):
         print(f"Classification error: {err_krr_test:.4f}")
         print(f"KCE (Gaussian, sigma={kce_sigma_krr_test:.4f}): {kce_krr_gaussian_test.item():.4f}")
         print(f"KCE (Laplace,  sigma={kce_sigma_krr_test:.4f}): {kce_krr_laplace_test.item():.4f}")
-        print(f"Smooth CE (SCE): {sce_krr_test.item():.4f}")
-        print(f"Expected Calibration Error (binning): {ece_krr_test:.4f}")
+        print(f"Smooth CE (SCE): {float(sce_krr_test):.4f}")
+        print(f"Expected Calibration Error (binning): {float(ece_krr_test):.4f}")
         
         print("---- Train Data ----")
         print(f"Classification error: {err_krr_train:.4f}")
         print(f"KCE (Gaussian, sigma={kce_sigma_krr_train:.4f}): {kce_krr_gaussian_train.item():.4f}")
         print(f"KCE (Laplace,  sigma={kce_sigma_krr_train:.4f}): {kce_krr_laplace_train.item():.4f}")
-        print(f"Smooth CE (SCE): {sce_krr_train.item():.4f}")
-        print(f"Expected Calibration Error (binning): {ece_krr_train:.4f}")
+        print(f"Smooth CE (SCE): {float(sce_krr_train):.4f}")
+        print(f"Expected Calibration Error (binning): {float(ece_krr_train):.4f}")
 
         results.append({
             'model': 'KRR_reg',
@@ -152,13 +152,13 @@ def run_experiment(n_train=10000, n_test=10000, reg=1e-2, input_dim=1):
             'error_test': err_krr_test,
             'kce_gaussian_test': kce_krr_gaussian_test.item(),
             'kce_laplace_test': kce_krr_laplace_test.item(),
-            'sce_test': sce_krr_test.item(),
-            'ece_test': ece_krr_test.item(),
+            'sce_test': float(sce_krr_test),
+            'ece_test': float(ece_krr_test),
             'error_train': err_krr_train,
             'kce_gaussian_train': kce_krr_gaussian_train.item(),
             'kce_laplace_train': kce_krr_laplace_train.item(),
-            'sce_train': sce_krr_train.item(),
-            'ece_train': ece_krr_train.item(),
+            'sce_train': float(sce_krr_train),
+            'ece_train': float(ece_krr_train),
         })
         
         # --- Kernel Logistic Regression (GD method) ---
@@ -195,15 +195,15 @@ def run_experiment(n_train=10000, n_test=10000, reg=1e-2, input_dim=1):
         print(f"Classification error: {err_klr_test:.4f}")
         print(f"KCE (Gaussian, sigma={kce_sigma_klr_test:.4f}): {kce_klr_gaussian_test.item():.4f}")
         print(f"KCE (Laplace,  sigma={kce_sigma_klr_test:.4f}): {kce_klr_laplace_test.item():.4f}")
-        print(f"Smooth CE (SCE): {sce_klr_test.item():.4f}")
-        print(f"Expected Calibration Error (binning): {ece_klr_test:.4f}")
+        print(f"Smooth CE (SCE): {float(sce_klr_test):.4f}")
+        print(f"Expected Calibration Error (binning): {float(ece_klr_test):.4f}")
         
         print("---- Train Data ----")
         print(f"Classification error: {err_klr_train:.4f}")
         print(f"KCE (Gaussian, sigma={kce_sigma_klr_train:.4f}): {kce_klr_gaussian_train.item():.4f}")
         print(f"KCE (Laplace,  sigma={kce_sigma_klr_train:.4f}): {kce_klr_laplace_train.item():.4f}")
-        print(f"Smooth CE (SCE): {sce_klr_train.item():.4f}")
-        print(f"Expected Calibration Error (binning): {ece_klr_train:.4f}")
+        print(f"Smooth CE (SCE): {float(sce_klr_train):.4f}")
+        print(f"Expected Calibration Error (binning): {float(ece_klr_train):.4f}")
         
         results.append({
             'model': 'KLR',
@@ -212,13 +212,13 @@ def run_experiment(n_train=10000, n_test=10000, reg=1e-2, input_dim=1):
             'error_test': err_klr_test,
             'kce_gaussian_test': kce_klr_gaussian_test.item(),
             'kce_laplace_test': kce_klr_laplace_test.item(),
-            'sce_test': sce_klr_test.item(),
-            'ece_test': ece_klr_test.item(),
+            'sce_test': float(sce_klr_test),
+            'ece_test': float(ece_klr_test),
             'error_train': err_klr_train,
             'kce_gaussian_train': kce_klr_gaussian_train.item(),
             'kce_laplace_train': kce_klr_laplace_train.item(),
-            'sce_train': sce_klr_train.item(),
-            'ece_train': ece_klr_train.item(),
+            'sce_train': float(sce_klr_train),
+            'ece_train': float(ece_klr_train),
         })
     
     return results
