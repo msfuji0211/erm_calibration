@@ -296,7 +296,8 @@ def main():
     
     elif args.exp_name in ['reg_sensitivity']:
         #reg_candidates = np.logspace(-4, 2, num=args.num_candidates_reg)  # example: 1e-4 ～ 1e2
-        reg_candidates = np.logspace(-6, 2, num=args.num_candidates_reg)  # example: 1e-4 ～ 1e2
+        #reg_candidates = np.logspace(-6, 2, num=args.num_candidates_reg)  # example: 1e-4 ～ 1e2
+        reg_candidates = np.logspace(-6, 3, num=args.num_candidates_reg)  # example: 1e-4 ～ 1e3
         n_train_fixed = args.sample_size_high
         n_test_fixed = args.sample_size_test
         for reg in reg_candidates:
