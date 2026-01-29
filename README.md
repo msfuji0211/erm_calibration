@@ -11,7 +11,7 @@ Repository layout
   - `run_experiments.py`: Main entry point with two modes:
     - `n_asymptotic` (default): sweep training set size on a log scale and aggregate across seeds
     - `reg_sensitivity`: fix training size and sweep regularization values (log-spaced)
-  - `data.py`: 2D balanced binary Gaussian mixture generator
+  - `data.py`: d-dimensional balanced binary Gaussian mixture generator (default: 1D)
   - `kernels.py`: Gaussian and Laplace kernels
   - `model.py`: KRR (closed-form) and KLR (GD/L-BFGS); GD uses learning rates from spectral radius estimates
   - `metrics.py`: Classification error, KCE, LinECE (convex optimization), binned ECE
